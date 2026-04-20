@@ -2,97 +2,118 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 
-import '../../domain/entities/movement.dart';
 import '../../domain/entities/pending_action.dart';
 import '../../domain/repositories/sync_repository.dart';
 import '../local/database.dart';
 import '../local/daos/pending_actions_dao.dart';
 import '../remote/api_client.dart';
-import '../remote/dtos/movement_dto.dart';
-import '../remote/dtos/pending_action_dto.dart';
+import '../remote/dtos/sync_payload_dto.dart';
+import '../../core/utils/metadata_collector.dart';
 
 class SyncRepositoryImpl implements SyncRepository {
   final AppDatabase _database;
   final ApiClient _apiClient;
 
-  SyncRepositoryImpl({required AppDatabase database, required ApiClient apiClient})
-      : _database = database,
+  SyncRepositoryImpl({
+    required AppDatabase database,
+    required ApiClient apiClient,
+  })  : _database = database,
         _apiClient = apiClient;
 
   PendingActionsDao get _dao => _database.pendingActionsDao;
 
+  // ── Enqueue ────────────────────────────────────────────────────────────────
+
   @override
-  Future<void> enqueuePendingAction(PendingAction action) async {
+  Future<void> enqueue(PendingAction action) async {
     await _dao.enqueue(PendingActionsTableCompanion(
-      id: Value(action.id),
-      type: Value(action.type.name),
-      payloadId: Value(action.payloadId),
-      queuedAt: Value(action.queuedAt),
-      requiresNetwork: Value(action.requiresNetwork),
+      actionId: Value(action.actionId),
+      type: Value(action.type),
+      payload: Value(action.payload),
+      synced: Value(action.synced),
+      attempts: Value(action.attempts),
+      status: Value(action.status.name),
+      failReason: Value(action.failReason),
+      createdAt: Value(action.createdAt),
+      nextRetryAt: Value(action.nextRetryAt),
     ));
   }
 
+  // ── Read ───────────────────────────────────────────────────────────────────
+
   @override
-  Future<List<PendingAction>> listPendingActions({int? limit, int? offset}) async {
-    final rows = await _dao.listPendingActions(limit: limit, offset: offset);
+  Future<List<PendingAction>> getUnsyncedActions() async {
+    final rows = await _dao.getUnsynced();
     return rows.map(_mapRow).toList();
   }
 
   @override
-  Future<void> markActionCompleted(String actionId) async {
-    await _dao.markCompleted(actionId);
-  }
+  Stream<int> watchUnsyncedCount() => _dao.watchUnsyncedCount();
 
   @override
-  Future<void> purgeCompletedActions() async {
-    await _dao.purgeCompletedActions();
-  }
+  Stream<List<PendingAction>> watchAll() =>
+      _dao.watchAll().map((rows) => rows.map(_mapRow).toList());
+
+  // ── Sync batch ─────────────────────────────────────────────────────────────
 
   @override
-  Future<void> syncAll() async {
-    final rows = await _dao.listPendingActions();
-    for (final row in rows) {
-      final action = _mapRow(row);
+  Future<void> syncBatch(List<PendingAction> actions) async {
+    if (actions.isEmpty) return;
 
-      if (action.type == PendingActionType.createMovement) {
-        final row = await _database.movementsDao.findById(action.payloadId);
-        if (row != null) {
-          final movement = Movement(
-            id: row.id,
-            itemId: row.itemId,
-            type: MovementType.values.firstWhere(
-              (type) => type.name == row.type,
-              orElse: () => MovementType.inventory,
-            ),
-            quantity: row.quantity,
-            unitOfMeasure: row.unitOfMeasure,
-            timestamp: row.timestamp,
-            performedBy: row.performedBy,
-            location: row.location,
-            metadata: row.metadata.isEmpty ? const {} : jsonDecode(row.metadata) as Map<String, dynamic>,
-          );
-          final movementDto = MovementDto.fromEntity(movement);
-          await _apiClient.postMovement(movementDto);
-        }
+    final deviceId = await MetadataCollector.instance.getDeviceId();
+
+    final syncActions = actions.map((a) {
+      final Map<String, dynamic> p =
+          jsonDecode(a.payload) as Map<String, dynamic>;
+      return SyncActionDto(
+        actionId: a.actionId,
+        type: a.type,
+        itemId: p['itemId'] as String,
+        quantity: (p['quantity'] as num).toInt(),
+        location: (p['location'] as String?) ?? 'DEFAULT',
+        timestamp: p['timestamp'] as String,
+        sessionId: p['sessionId'] as String,
+        lat: (p['lat'] as num?)?.toDouble(),
+        lng: (p['lng'] as num?)?.toDouble(),
+        imageKey: p['imageKey'] as String?,
+      );
+    }).toList();
+
+    final result = await _apiClient.sync(
+      SyncPayloadDto(deviceId: deviceId, actions: syncActions),
+    );
+
+    // Mark successes.
+    await _dao.markSynced(result.synced);
+
+    // Handle failures.
+    for (final failure in result.failed) {
+      if (failure.reason == 'INSUFFICIENT_STOCK') {
+        // Cannot auto-retry — surface to operator.
+        await _dao.markFailed(failure.actionId, failure.reason);
       } else {
-        final dto = PendingActionDto.fromEntity(action);
-        await _apiClient.syncPendingAction(dto);
+        // Schedule retry with exponential backoff.
+        await _dao.scheduleRetry(failure.actionId);
       }
-
-      await _dao.markCompleted(action.id);
     }
   }
 
-  PendingAction _mapRow(PendingActionsTableData row) {
-    return PendingAction(
-      id: row.id,
-      type: PendingActionType.values.firstWhere(
-        (type) => type.name == row.type,
-        orElse: () => PendingActionType.createMovement,
-      ),
-      payloadId: row.payloadId,
-      queuedAt: row.queuedAt,
-      requiresNetwork: row.requiresNetwork,
-    );
-  }
+  // ── Mapping ────────────────────────────────────────────────────────────────
+
+  PendingAction _mapRow(PendingActionsTableData row) => PendingAction(
+        localId: row.id,
+        actionId: row.actionId,
+        type: row.type,
+        payload: row.payload,
+        synced: row.synced,
+        attempts: row.attempts,
+        status: PendingActionStatus.values.firstWhere(
+          (s) => s.name == row.status,
+          orElse: () => PendingActionStatus.queued,
+        ),
+        failReason: row.failReason,
+        createdAt: row.createdAt,
+        nextRetryAt: row.nextRetryAt,
+      );
 }
+

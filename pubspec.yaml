@@ -6,11 +6,32 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^1.1.0
+  # Network
+  dio: ^5.7.0
+  # State management
+  flutter_riverpod: ^2.5.1
+  # Local DB
   drift: ^2.10.0
   sqlite3_flutter_libs: ^0.5.0
   path_provider: ^2.0.0
   path: ^1.8.0
+  # Secure storage (JWT)
+  flutter_secure_storage: ^9.2.2
+  # Barcode scanner
+  mobile_scanner: ^5.2.3
+  # Location / GPS
+  geolocator: ^13.0.2
+  permission_handler: ^11.3.1
+  # Connectivity
+  connectivity_plus: ^6.0.5
+  # Device info
+  device_info_plus: ^10.1.2
+  # Functional programming (Either / Result)
+  fpdart: ^1.1.0
+  # Image compression
+  image: ^4.2.0
+  # UUID generation
+  uuid: ^4.4.2
 
 dev_dependencies:
   flutter_test:
@@ -18,5 +39,6 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   drift_dev: ^2.10.0
   build_runner: ^2.4.0
+
 flutter:
   uses-material-design: true

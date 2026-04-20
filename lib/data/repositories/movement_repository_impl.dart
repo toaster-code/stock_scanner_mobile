@@ -55,6 +55,11 @@ class MovementRepositoryImpl implements MovementRepository {
       timestamp: Value(movement.timestamp),
       performedBy: Value(movement.performedBy),
       location: Value(movement.location),
+      lat: Value(movement.lat),
+      lng: Value(movement.lng),
+      deviceId: Value(movement.deviceId),
+      sessionId: Value(movement.sessionId),
+      imageUrl: Value(movement.imageUrl),
       metadata: Value(jsonEncode(movement.metadata)),
     ));
   }
@@ -72,7 +77,14 @@ class MovementRepositoryImpl implements MovementRepository {
       timestamp: row.timestamp,
       performedBy: row.performedBy,
       location: row.location,
-      metadata: row.metadata.isEmpty ? {} : jsonDecode(row.metadata) as Map<String, dynamic>,
+      lat: row.lat,
+      lng: row.lng,
+      deviceId: row.deviceId,
+      sessionId: row.sessionId,
+      imageUrl: row.imageUrl,
+      metadata: row.metadata.isEmpty
+          ? {}
+          : jsonDecode(row.metadata) as Map<String, dynamic>,
     );
   }
 }

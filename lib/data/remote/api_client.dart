@@ -1,72 +1,77 @@
-import 'dart:convert';
+import 'package:dio/dio.dart';
 
-import 'package:http/http.dart' as http;
 import '../../core/network/api_endpoints.dart';
+import 'dtos/auth_dto.dart';
 import 'dtos/item_dto.dart';
 import 'dtos/movement_dto.dart';
 import 'dtos/stock_entry_dto.dart';
-import 'dtos/pending_action_dto.dart';
+import 'dtos/sync_payload_dto.dart';
 
+/// Typed HTTP client backed by [Dio].
+///
+/// JWT attachment and refresh are handled transparently by [TokenInterceptor]
+/// configured on the [Dio] instance passed at construction.
 class ApiClient {
-  final Uri baseUrl;
-  final http.Client httpClient;
+  final Dio _dio;
 
-  ApiClient({required this.baseUrl, http.Client? httpClient})
-      : httpClient = httpClient ?? http.Client();
+  ApiClient(this._dio);
 
-  Future<List<ItemDto>> fetchItems() async {
-    final url = baseUrl.resolve(ApiEndpoints.items);
-    final response = await httpClient.get(url, headers: {'Accept': 'application/json'});
+  // ── Auth ───────────────────────────────────────────────────────────────────
 
-    if (response.statusCode != 200) {
-      throw Exception('Falha ao carregar itens: ${response.statusCode}');
-    }
-
-    final jsonList = jsonDecode(response.body) as List<dynamic>;
-    return jsonList.map((json) => ItemDto.fromJson(json as Map<String, dynamic>)).toList();
+  Future<LoginResponseDto> login(String username, String password) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      ApiEndpoints.login,
+      data: LoginRequestDto(username: username, password: password).toJson(),
+    );
+    return LoginResponseDto.fromJson(response.data!);
   }
+
+  // ── Items ──────────────────────────────────────────────────────────────────
+
+  Future<List<ItemDto>> fetchItems({int page = 1, int limit = 100}) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      ApiEndpoints.items,
+      queryParameters: {'page': page, 'limit': limit, 'active': true},
+    );
+    final data = response.data!['data'] as List<dynamic>;
+    return data
+        .map((e) => ItemDto.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<ItemDto?> fetchItemById(String id) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '${ApiEndpoints.items}/$id',
+    );
+    return ItemDto.fromJson(response.data!);
+  }
+
+  // ── Stock ──────────────────────────────────────────────────────────────────
 
   Future<List<StockEntryDto>> fetchStockEntries() async {
-    final url = baseUrl.resolve(ApiEndpoints.stockEntries);
-    final response = await httpClient.get(url, headers: {'Accept': 'application/json'});
-
-    if (response.statusCode != 200) {
-      throw Exception('Falha ao carregar estoque: ${response.statusCode}');
-    }
-
-    final jsonList = jsonDecode(response.body) as List<dynamic>;
-    return jsonList.map((json) => StockEntryDto.fromJson(json as Map<String, dynamic>)).toList();
+    final response = await _dio.get<Map<String, dynamic>>(
+      ApiEndpoints.stockEntries,
+    );
+    final data = response.data!['data'] as List<dynamic>;
+    return data
+        .map((e) => StockEntryDto.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
-  Future<void> postMovement(MovementDto movementDto) async {
-    final url = baseUrl.resolve(ApiEndpoints.movements);
-    final response = await httpClient.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: jsonEncode(movementDto.toJson()),
-    );
+  // ── Movements ──────────────────────────────────────────────────────────────
 
-    if (response.statusCode != 200 && response.statusCode != 201) {
-      throw Exception('Falha ao enviar movimento: ${response.statusCode}');
-    }
+  Future<void> postMovement(MovementDto dto) async {
+    await _dio.post<void>(ApiEndpoints.movements, data: dto.toJson());
   }
 
-  Future<void> syncPendingAction(PendingActionDto actionDto) async {
-    final url = baseUrl.resolve(ApiEndpoints.sync);
-    final response = await httpClient.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: jsonEncode(actionDto.toJson()),
-    );
+  // ── Sync ───────────────────────────────────────────────────────────────────
 
-    if (response.statusCode != 200 && response.statusCode != 201) {
-      throw Exception('Falha ao sincronizar ação: ${response.statusCode}');
-    }
+  Future<SyncResultDto> sync(SyncPayloadDto payload) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      ApiEndpoints.sync,
+      data: payload.toJson(),
+    );
+    return SyncResultDto.fromJson(response.data!);
   }
 }
+

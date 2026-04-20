@@ -1,138 +1,190 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_strings.dart';
-import '../../domain/entities/item.dart';
-import '../providers/item_list_provider.dart';
-import '../providers/scan_provider.dart';
-import '../providers/stock_provider.dart';
-import '../providers/sync_provider.dart';
-import 'scan_screen.dart';
-import 'stock_screen.dart';
+import '../../core/providers/app_providers.dart';
+import '../providers/auth_provider.dart';
+import '../providers/connectivity_provider.dart';
+import '../widgets/connectivity_banner.dart';
+import 'inbound/inbound_screen.dart';
+import 'inventory/inventory_screen.dart';
+import 'outbound/outbound_screen.dart';
+import 'sync_status/sync_status_screen.dart';
 
-class HomeScreen extends StatefulWidget {
-  final ItemListProvider itemListProvider;
-  final SyncProvider syncProvider;
-  final ScanProvider scanProvider;
-  final StockProvider stockProvider;
-
-  const HomeScreen({
-    super.key,
-    required this.itemListProvider,
-    required this.syncProvider,
-    required this.scanProvider,
-    required this.stockProvider,
-  });
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    widget.itemListProvider.addListener(_refresh);
-    widget.syncProvider.addListener(_refresh);
-    widget.itemListProvider.loadItems();
-  }
-
-  @override
-  void dispose() {
-    widget.itemListProvider.removeListener(_refresh);
-    widget.syncProvider.removeListener(_refresh);
-    super.dispose();
-  }
-
-  void _refresh() {
-    if (mounted) setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final provider = widget.itemListProvider;
-    final sync = widget.syncProvider;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final auth = ref.watch(authProvider);
+    final pendingAsync = ref.watch(pendingCountProvider);
+    final syncUseCase = ref.read(syncQueueUseCaseProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text(AppStrings.homeTitle),
         actions: [
+          // Sync button with pending badge
+          Stack(
+            alignment: Alignment.topRight,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.sync),
+                tooltip: AppStrings.syncButtonLabel,
+                onPressed: () async => syncUseCase.flush(),
+              ),
+              pendingAsync.when(
+                data: (count) => count > 0
+                    ? Positioned(
+                        top: 6,
+                        right: 6,
+                        child: CircleAvatar(
+                          radius: 8,
+                          backgroundColor: Colors.red,
+                          child: Text('$count',
+                              style: const TextStyle(
+                                  fontSize: 9, color: Colors.white)),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+                loading: () => const SizedBox.shrink(),
+                error: (_, __) => const SizedBox.shrink(),
+              ),
+            ],
+          ),
           IconButton(
-            onPressed: sync.isSyncing ? null : sync.sync,
-            icon: sync.isSyncing ? const CircularProgressIndicator(color: Colors.white) : const Icon(Icons.sync),
-            tooltip: AppStrings.syncButtonLabel,
+            icon: const Icon(Icons.logout),
+            tooltip: 'Sair',
+            onPressed: () => ref.read(authProvider.notifier).logout(),
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: ConnectivityBanner(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (auth.user != null) ...[
+                Text(
+                  'Olá, ${auth.user!.username}',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 24),
+              ],
+              // INBOUND
+              _ModeCard(
+                label: 'ENTRADA',
+                subtitle: 'Recebimento de mercadorias',
+                icon: Icons.arrow_downward,
+                color: AppColors.inbound,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                      builder: (_) => const InboundScreen()),
+                ),
+              ),
+              const SizedBox(height: 16),
+              // OUTBOUND
+              _ModeCard(
+                label: 'SAÍDA',
+                subtitle: 'Separação / expedição',
+                icon: Icons.arrow_upward,
+                color: AppColors.outbound,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                      builder: (_) => const OutboundScreen()),
+                ),
+              ),
+              const SizedBox(height: 16),
+              // INVENTORY
+              _ModeCard(
+                label: 'INVENTÁRIO',
+                subtitle: 'Contagem física',
+                icon: Icons.inventory_2_outlined,
+                color: AppColors.inventory,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                      builder: (_) => const InventoryScreen()),
+                ),
+              ),
+              const Spacer(),
+              // Sync status
+              OutlinedButton.icon(
+                icon: const Icon(Icons.list_alt),
+                label: const Text('Ver fila de sincronização'),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                      builder: (_) => const SyncStatusScreen()),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ModeCard extends StatelessWidget {
+  const _ModeCard({
+    required this.label,
+    required this.subtitle,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  final String label;
+  final String subtitle;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          border: Border.all(color: color.withOpacity(0.4)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        child: Row(
           children: [
-            Row(
+            CircleAvatar(
+              radius: 24,
+              backgroundColor: color,
+              child: Icon(icon, color: Colors.white, size: 26),
+            ),
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) => ScanScreen(scanProvider: widget.scanProvider),
-                      ));
-                    },
-                    child: const Text(AppStrings.scanTitle),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) => StockScreen(stockProvider: widget.stockProvider),
-                      ));
-                    },
-                    child: const Text('Ver Estoque'),
-                  ),
-                ),
+                Text(label,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                        color: color)),
+                Text(subtitle,
+                    style: TextStyle(
+                        color: Colors.grey.shade600, fontSize: 13)),
               ],
             ),
-            const SizedBox(height: 16),
-            if (sync.message != null)
-              Text(sync.message!, style: const TextStyle(color: Colors.green)),
-            if (provider.errorMessage != null)
-              Text(provider.errorMessage!, style: const TextStyle(color: Colors.red)),
-            const SizedBox(height: 8),
-            Expanded(child: _buildItemList(provider)),
+            const Spacer(),
+            Icon(Icons.chevron_right, color: color),
           ],
         ),
       ),
     );
   }
-
-  Widget _buildItemList(ItemListProvider provider) {
-    if (provider.isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (provider.items.isEmpty) {
-      return const Center(child: Text(AppStrings.noItemsMessage));
-    }
-
-    return ListView.separated(
-      itemCount: provider.items.length,
-      separatorBuilder: (_, __) => const Divider(),
-      itemBuilder: (_, index) => _ItemTile(item: provider.items[index]),
-    );
-  }
 }
 
-class _ItemTile extends StatelessWidget {
-  final Item item;
-
-  const _ItemTile({required this.item});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(item.name),
-      subtitle: Text('Código: ${item.barcode} • Local: ${item.primaryLocation}'),
-      trailing: Text(item.status.name.toUpperCase()),
-    );
-  }
-}

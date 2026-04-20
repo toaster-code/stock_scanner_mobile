@@ -1,60 +1,52 @@
 import '../../../domain/entities/pending_action.dart';
 
 class PendingActionDto {
-  final String id;
+  final String actionId;
   final String type;
-  final String payloadId;
-  final String queuedAt;
-  final bool requiresNetwork;
+  final String payload;
+  final String createdAt;
 
   PendingActionDto({
-    required this.id,
+    required this.actionId,
     required this.type,
-    required this.payloadId,
-    required this.queuedAt,
-    required this.requiresNetwork,
+    required this.payload,
+    required this.createdAt,
   });
 
   factory PendingActionDto.fromJson(Map<String, dynamic> json) {
     return PendingActionDto(
-      id: json['id'] as String,
+      actionId: json['actionId'] as String,
       type: json['type'] as String,
-      payloadId: json['payloadId'] as String,
-      queuedAt: json['queuedAt'] as String,
-      requiresNetwork: json['requiresNetwork'] as bool,
+      payload: json['payload'] as String,
+      createdAt: json['createdAt'] as String,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'actionId': actionId,
       'type': type,
-      'payloadId': payloadId,
-      'queuedAt': queuedAt,
-      'requiresNetwork': requiresNetwork,
+      'payload': payload,
+      'createdAt': createdAt,
     };
   }
 
   PendingAction toEntity() {
     return PendingAction(
-      id: id,
-      type: PendingActionType.values.firstWhere(
-        (value) => value.name == type,
-        orElse: () => PendingActionType.createMovement,
-      ),
-      payloadId: payloadId,
-      queuedAt: DateTime.parse(queuedAt),
-      requiresNetwork: requiresNetwork,
+      actionId: actionId,
+      type: type,
+      payload: payload,
+      createdAt: DateTime.parse(createdAt),
     );
   }
 
   factory PendingActionDto.fromEntity(PendingAction action) {
     return PendingActionDto(
-      id: action.id,
-      type: action.type.name,
-      payloadId: action.payloadId,
-      queuedAt: action.queuedAt.toIso8601String(),
-      requiresNetwork: action.requiresNetwork,
+      actionId: action.actionId,
+      type: action.type,
+      payload: action.payload,
+      createdAt: action.createdAt.toIso8601String(),
     );
   }
 }
+

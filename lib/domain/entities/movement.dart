@@ -13,6 +13,14 @@ class Movement {
   final DateTime timestamp;
   final String performedBy;
   final String? location;
+
+  // ── Audit / metadata fields ────────────────────────────────────────────────
+  final double? lat;
+  final double? lng;
+  final String? deviceId;
+  final String? sessionId;
+  final String? imageUrl;
+
   final Map<String, dynamic> metadata;
 
   Movement({
@@ -24,6 +32,11 @@ class Movement {
     required this.timestamp,
     required this.performedBy,
     this.location,
+    this.lat,
+    this.lng,
+    this.deviceId,
+    this.sessionId,
+    this.imageUrl,
     Map<String, dynamic>? metadata,
   }) : metadata = metadata ?? const {};
 
@@ -36,6 +49,11 @@ class Movement {
     DateTime? timestamp,
     String? performedBy,
     String? location,
+    double? lat,
+    double? lng,
+    String? deviceId,
+    String? sessionId,
+    String? imageUrl,
     Map<String, dynamic>? metadata,
   }) {
     return Movement(
@@ -47,6 +65,11 @@ class Movement {
       timestamp: timestamp ?? this.timestamp,
       performedBy: performedBy ?? this.performedBy,
       location: location ?? this.location,
+      lat: lat ?? this.lat,
+      lng: lng ?? this.lng,
+      deviceId: deviceId ?? this.deviceId,
+      sessionId: sessionId ?? this.sessionId,
+      imageUrl: imageUrl ?? this.imageUrl,
       metadata: metadata ?? this.metadata,
     );
   }

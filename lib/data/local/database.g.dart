@@ -386,18 +386,12 @@ class $MovementsTableTable extends MovementsTable
   @override
   late final GeneratedColumn<String> itemId = GeneratedColumn<String>(
       'item_id', aliasedName, false,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 128),
-      type: DriftSqlType.string,
-      requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
   late final GeneratedColumn<String> type = GeneratedColumn<String>(
       'type', aliasedName, false,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 64),
-      type: DriftSqlType.string,
-      requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _quantityMeta =
       const VerificationMeta('quantity');
   @override
@@ -409,10 +403,7 @@ class $MovementsTableTable extends MovementsTable
   @override
   late final GeneratedColumn<String> unitOfMeasure = GeneratedColumn<String>(
       'unit_of_measure', aliasedName, false,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 32),
-      type: DriftSqlType.string,
-      requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _timestampMeta =
       const VerificationMeta('timestamp');
   @override
@@ -424,19 +415,41 @@ class $MovementsTableTable extends MovementsTable
   @override
   late final GeneratedColumn<String> performedBy = GeneratedColumn<String>(
       'performed_by', aliasedName, false,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 128),
-      type: DriftSqlType.string,
-      requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _locationMeta =
       const VerificationMeta('location');
   @override
   late final GeneratedColumn<String> location = GeneratedColumn<String>(
       'location', aliasedName, true,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 128),
-      type: DriftSqlType.string,
-      requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _latMeta = const VerificationMeta('lat');
+  @override
+  late final GeneratedColumn<double> lat = GeneratedColumn<double>(
+      'lat', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _lngMeta = const VerificationMeta('lng');
+  @override
+  late final GeneratedColumn<double> lng = GeneratedColumn<double>(
+      'lng', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _deviceIdMeta =
+      const VerificationMeta('deviceId');
+  @override
+  late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
+      'device_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _sessionIdMeta =
+      const VerificationMeta('sessionId');
+  @override
+  late final GeneratedColumn<String> sessionId = GeneratedColumn<String>(
+      'session_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _imageUrlMeta =
+      const VerificationMeta('imageUrl');
+  @override
+  late final GeneratedColumn<String> imageUrl = GeneratedColumn<String>(
+      'image_url', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _metadataMeta =
       const VerificationMeta('metadata');
   @override
@@ -455,6 +468,11 @@ class $MovementsTableTable extends MovementsTable
         timestamp,
         performedBy,
         location,
+        lat,
+        lng,
+        deviceId,
+        sessionId,
+        imageUrl,
         metadata
       ];
   @override
@@ -516,6 +534,26 @@ class $MovementsTableTable extends MovementsTable
       context.handle(_locationMeta,
           location.isAcceptableOrUnknown(data['location']!, _locationMeta));
     }
+    if (data.containsKey('lat')) {
+      context.handle(
+          _latMeta, lat.isAcceptableOrUnknown(data['lat']!, _latMeta));
+    }
+    if (data.containsKey('lng')) {
+      context.handle(
+          _lngMeta, lng.isAcceptableOrUnknown(data['lng']!, _lngMeta));
+    }
+    if (data.containsKey('device_id')) {
+      context.handle(_deviceIdMeta,
+          deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta));
+    }
+    if (data.containsKey('session_id')) {
+      context.handle(_sessionIdMeta,
+          sessionId.isAcceptableOrUnknown(data['session_id']!, _sessionIdMeta));
+    }
+    if (data.containsKey('image_url')) {
+      context.handle(_imageUrlMeta,
+          imageUrl.isAcceptableOrUnknown(data['image_url']!, _imageUrlMeta));
+    }
     if (data.containsKey('metadata')) {
       context.handle(_metadataMeta,
           metadata.isAcceptableOrUnknown(data['metadata']!, _metadataMeta));
@@ -545,6 +583,16 @@ class $MovementsTableTable extends MovementsTable
           .read(DriftSqlType.string, data['${effectivePrefix}performed_by'])!,
       location: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}location']),
+      lat: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}lat']),
+      lng: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}lng']),
+      deviceId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}device_id']),
+      sessionId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}session_id']),
+      imageUrl: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}image_url']),
       metadata: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}metadata'])!,
     );
@@ -560,12 +608,21 @@ class MovementsTableData extends DataClass
     implements Insertable<MovementsTableData> {
   final String id;
   final String itemId;
+
+  /// IN | OUT | INVENTORY_COUNT
   final String type;
   final double quantity;
   final String unitOfMeasure;
   final DateTime timestamp;
   final String performedBy;
   final String? location;
+  final double? lat;
+  final double? lng;
+  final String? deviceId;
+  final String? sessionId;
+  final String? imageUrl;
+
+  /// Arbitrary JSON for extensibility.
   final String metadata;
   const MovementsTableData(
       {required this.id,
@@ -576,6 +633,11 @@ class MovementsTableData extends DataClass
       required this.timestamp,
       required this.performedBy,
       this.location,
+      this.lat,
+      this.lng,
+      this.deviceId,
+      this.sessionId,
+      this.imageUrl,
       required this.metadata});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -589,6 +651,21 @@ class MovementsTableData extends DataClass
     map['performed_by'] = Variable<String>(performedBy);
     if (!nullToAbsent || location != null) {
       map['location'] = Variable<String>(location);
+    }
+    if (!nullToAbsent || lat != null) {
+      map['lat'] = Variable<double>(lat);
+    }
+    if (!nullToAbsent || lng != null) {
+      map['lng'] = Variable<double>(lng);
+    }
+    if (!nullToAbsent || deviceId != null) {
+      map['device_id'] = Variable<String>(deviceId);
+    }
+    if (!nullToAbsent || sessionId != null) {
+      map['session_id'] = Variable<String>(sessionId);
+    }
+    if (!nullToAbsent || imageUrl != null) {
+      map['image_url'] = Variable<String>(imageUrl);
     }
     map['metadata'] = Variable<String>(metadata);
     return map;
@@ -606,6 +683,17 @@ class MovementsTableData extends DataClass
       location: location == null && nullToAbsent
           ? const Value.absent()
           : Value(location),
+      lat: lat == null && nullToAbsent ? const Value.absent() : Value(lat),
+      lng: lng == null && nullToAbsent ? const Value.absent() : Value(lng),
+      deviceId: deviceId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deviceId),
+      sessionId: sessionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sessionId),
+      imageUrl: imageUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imageUrl),
       metadata: Value(metadata),
     );
   }
@@ -622,6 +710,11 @@ class MovementsTableData extends DataClass
       timestamp: serializer.fromJson<DateTime>(json['timestamp']),
       performedBy: serializer.fromJson<String>(json['performedBy']),
       location: serializer.fromJson<String?>(json['location']),
+      lat: serializer.fromJson<double?>(json['lat']),
+      lng: serializer.fromJson<double?>(json['lng']),
+      deviceId: serializer.fromJson<String?>(json['deviceId']),
+      sessionId: serializer.fromJson<String?>(json['sessionId']),
+      imageUrl: serializer.fromJson<String?>(json['imageUrl']),
       metadata: serializer.fromJson<String>(json['metadata']),
     );
   }
@@ -637,6 +730,11 @@ class MovementsTableData extends DataClass
       'timestamp': serializer.toJson<DateTime>(timestamp),
       'performedBy': serializer.toJson<String>(performedBy),
       'location': serializer.toJson<String?>(location),
+      'lat': serializer.toJson<double?>(lat),
+      'lng': serializer.toJson<double?>(lng),
+      'deviceId': serializer.toJson<String?>(deviceId),
+      'sessionId': serializer.toJson<String?>(sessionId),
+      'imageUrl': serializer.toJson<String?>(imageUrl),
       'metadata': serializer.toJson<String>(metadata),
     };
   }
@@ -650,6 +748,11 @@ class MovementsTableData extends DataClass
           DateTime? timestamp,
           String? performedBy,
           Value<String?> location = const Value.absent(),
+          Value<double?> lat = const Value.absent(),
+          Value<double?> lng = const Value.absent(),
+          Value<String?> deviceId = const Value.absent(),
+          Value<String?> sessionId = const Value.absent(),
+          Value<String?> imageUrl = const Value.absent(),
           String? metadata}) =>
       MovementsTableData(
         id: id ?? this.id,
@@ -660,6 +763,11 @@ class MovementsTableData extends DataClass
         timestamp: timestamp ?? this.timestamp,
         performedBy: performedBy ?? this.performedBy,
         location: location.present ? location.value : this.location,
+        lat: lat.present ? lat.value : this.lat,
+        lng: lng.present ? lng.value : this.lng,
+        deviceId: deviceId.present ? deviceId.value : this.deviceId,
+        sessionId: sessionId.present ? sessionId.value : this.sessionId,
+        imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
         metadata: metadata ?? this.metadata,
       );
   MovementsTableData copyWithCompanion(MovementsTableCompanion data) {
@@ -675,6 +783,11 @@ class MovementsTableData extends DataClass
       performedBy:
           data.performedBy.present ? data.performedBy.value : this.performedBy,
       location: data.location.present ? data.location.value : this.location,
+      lat: data.lat.present ? data.lat.value : this.lat,
+      lng: data.lng.present ? data.lng.value : this.lng,
+      deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
+      sessionId: data.sessionId.present ? data.sessionId.value : this.sessionId,
+      imageUrl: data.imageUrl.present ? data.imageUrl.value : this.imageUrl,
       metadata: data.metadata.present ? data.metadata.value : this.metadata,
     );
   }
@@ -690,14 +803,32 @@ class MovementsTableData extends DataClass
           ..write('timestamp: $timestamp, ')
           ..write('performedBy: $performedBy, ')
           ..write('location: $location, ')
+          ..write('lat: $lat, ')
+          ..write('lng: $lng, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('sessionId: $sessionId, ')
+          ..write('imageUrl: $imageUrl, ')
           ..write('metadata: $metadata')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, itemId, type, quantity, unitOfMeasure,
-      timestamp, performedBy, location, metadata);
+  int get hashCode => Object.hash(
+      id,
+      itemId,
+      type,
+      quantity,
+      unitOfMeasure,
+      timestamp,
+      performedBy,
+      location,
+      lat,
+      lng,
+      deviceId,
+      sessionId,
+      imageUrl,
+      metadata);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -710,6 +841,11 @@ class MovementsTableData extends DataClass
           other.timestamp == this.timestamp &&
           other.performedBy == this.performedBy &&
           other.location == this.location &&
+          other.lat == this.lat &&
+          other.lng == this.lng &&
+          other.deviceId == this.deviceId &&
+          other.sessionId == this.sessionId &&
+          other.imageUrl == this.imageUrl &&
           other.metadata == this.metadata);
 }
 
@@ -722,6 +858,11 @@ class MovementsTableCompanion extends UpdateCompanion<MovementsTableData> {
   final Value<DateTime> timestamp;
   final Value<String> performedBy;
   final Value<String?> location;
+  final Value<double?> lat;
+  final Value<double?> lng;
+  final Value<String?> deviceId;
+  final Value<String?> sessionId;
+  final Value<String?> imageUrl;
   final Value<String> metadata;
   final Value<int> rowid;
   const MovementsTableCompanion({
@@ -733,6 +874,11 @@ class MovementsTableCompanion extends UpdateCompanion<MovementsTableData> {
     this.timestamp = const Value.absent(),
     this.performedBy = const Value.absent(),
     this.location = const Value.absent(),
+    this.lat = const Value.absent(),
+    this.lng = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.sessionId = const Value.absent(),
+    this.imageUrl = const Value.absent(),
     this.metadata = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -745,6 +891,11 @@ class MovementsTableCompanion extends UpdateCompanion<MovementsTableData> {
     required DateTime timestamp,
     required String performedBy,
     this.location = const Value.absent(),
+    this.lat = const Value.absent(),
+    this.lng = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.sessionId = const Value.absent(),
+    this.imageUrl = const Value.absent(),
     this.metadata = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : id = Value(id),
@@ -763,6 +914,11 @@ class MovementsTableCompanion extends UpdateCompanion<MovementsTableData> {
     Expression<DateTime>? timestamp,
     Expression<String>? performedBy,
     Expression<String>? location,
+    Expression<double>? lat,
+    Expression<double>? lng,
+    Expression<String>? deviceId,
+    Expression<String>? sessionId,
+    Expression<String>? imageUrl,
     Expression<String>? metadata,
     Expression<int>? rowid,
   }) {
@@ -775,6 +931,11 @@ class MovementsTableCompanion extends UpdateCompanion<MovementsTableData> {
       if (timestamp != null) 'timestamp': timestamp,
       if (performedBy != null) 'performed_by': performedBy,
       if (location != null) 'location': location,
+      if (lat != null) 'lat': lat,
+      if (lng != null) 'lng': lng,
+      if (deviceId != null) 'device_id': deviceId,
+      if (sessionId != null) 'session_id': sessionId,
+      if (imageUrl != null) 'image_url': imageUrl,
       if (metadata != null) 'metadata': metadata,
       if (rowid != null) 'rowid': rowid,
     });
@@ -789,6 +950,11 @@ class MovementsTableCompanion extends UpdateCompanion<MovementsTableData> {
       Value<DateTime>? timestamp,
       Value<String>? performedBy,
       Value<String?>? location,
+      Value<double?>? lat,
+      Value<double?>? lng,
+      Value<String?>? deviceId,
+      Value<String?>? sessionId,
+      Value<String?>? imageUrl,
       Value<String>? metadata,
       Value<int>? rowid}) {
     return MovementsTableCompanion(
@@ -800,6 +966,11 @@ class MovementsTableCompanion extends UpdateCompanion<MovementsTableData> {
       timestamp: timestamp ?? this.timestamp,
       performedBy: performedBy ?? this.performedBy,
       location: location ?? this.location,
+      lat: lat ?? this.lat,
+      lng: lng ?? this.lng,
+      deviceId: deviceId ?? this.deviceId,
+      sessionId: sessionId ?? this.sessionId,
+      imageUrl: imageUrl ?? this.imageUrl,
       metadata: metadata ?? this.metadata,
       rowid: rowid ?? this.rowid,
     );
@@ -832,6 +1003,21 @@ class MovementsTableCompanion extends UpdateCompanion<MovementsTableData> {
     if (location.present) {
       map['location'] = Variable<String>(location.value);
     }
+    if (lat.present) {
+      map['lat'] = Variable<double>(lat.value);
+    }
+    if (lng.present) {
+      map['lng'] = Variable<double>(lng.value);
+    }
+    if (deviceId.present) {
+      map['device_id'] = Variable<String>(deviceId.value);
+    }
+    if (sessionId.present) {
+      map['session_id'] = Variable<String>(sessionId.value);
+    }
+    if (imageUrl.present) {
+      map['image_url'] = Variable<String>(imageUrl.value);
+    }
     if (metadata.present) {
       map['metadata'] = Variable<String>(metadata.value);
     }
@@ -852,6 +1038,11 @@ class MovementsTableCompanion extends UpdateCompanion<MovementsTableData> {
           ..write('timestamp: $timestamp, ')
           ..write('performedBy: $performedBy, ')
           ..write('location: $location, ')
+          ..write('lat: $lat, ')
+          ..write('lng: $lng, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('sessionId: $sessionId, ')
+          ..write('imageUrl: $imageUrl, ')
           ..write('metadata: $metadata, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -1232,45 +1423,85 @@ class $PendingActionsTableTable extends PendingActionsTable
   $PendingActionsTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _actionIdMeta =
+      const VerificationMeta('actionId');
+  @override
+  late final GeneratedColumn<String> actionId = GeneratedColumn<String>(
+      'action_id', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
   late final GeneratedColumn<String> type = GeneratedColumn<String>(
       'type', aliasedName, false,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 64),
-      type: DriftSqlType.string,
-      requiredDuringInsert: true);
-  static const VerificationMeta _payloadIdMeta =
-      const VerificationMeta('payloadId');
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _payloadMeta =
+      const VerificationMeta('payload');
   @override
-  late final GeneratedColumn<String> payloadId = GeneratedColumn<String>(
-      'payload_id', aliasedName, false,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 128),
-      type: DriftSqlType.string,
-      requiredDuringInsert: true);
-  static const VerificationMeta _queuedAtMeta =
-      const VerificationMeta('queuedAt');
+  late final GeneratedColumn<String> payload = GeneratedColumn<String>(
+      'payload', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
   @override
-  late final GeneratedColumn<DateTime> queuedAt = GeneratedColumn<DateTime>(
-      'queued_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _requiresNetworkMeta =
-      const VerificationMeta('requiresNetwork');
-  @override
-  late final GeneratedColumn<bool> requiresNetwork = GeneratedColumn<bool>(
-      'requires_network', aliasedName, false,
+  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
+      'synced', aliasedName, false,
       type: DriftSqlType.bool,
       requiredDuringInsert: false,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'CHECK ("requires_network" IN (0, 1))'),
-      defaultValue: const Constant(true));
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("synced" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _attemptsMeta =
+      const VerificationMeta('attempts');
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, type, payloadId, queuedAt, requiresNetwork];
+  late final GeneratedColumn<int> attempts = GeneratedColumn<int>(
+      'attempts', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('queued'));
+  static const VerificationMeta _failReasonMeta =
+      const VerificationMeta('failReason');
+  @override
+  late final GeneratedColumn<String> failReason = GeneratedColumn<String>(
+      'fail_reason', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _nextRetryAtMeta =
+      const VerificationMeta('nextRetryAt');
+  @override
+  late final GeneratedColumn<DateTime> nextRetryAt = GeneratedColumn<DateTime>(
+      'next_retry_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        actionId,
+        type,
+        payload,
+        synced,
+        attempts,
+        status,
+        failReason,
+        createdAt,
+        nextRetryAt
+      ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1284,8 +1515,12 @@ class $PendingActionsTableTable extends PendingActionsTable
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('action_id')) {
+      context.handle(_actionIdMeta,
+          actionId.isAcceptableOrUnknown(data['action_id']!, _actionIdMeta));
     } else if (isInserting) {
-      context.missing(_idMeta);
+      context.missing(_actionIdMeta);
     }
     if (data.containsKey('type')) {
       context.handle(
@@ -1293,23 +1528,41 @@ class $PendingActionsTableTable extends PendingActionsTable
     } else if (isInserting) {
       context.missing(_typeMeta);
     }
-    if (data.containsKey('payload_id')) {
-      context.handle(_payloadIdMeta,
-          payloadId.isAcceptableOrUnknown(data['payload_id']!, _payloadIdMeta));
+    if (data.containsKey('payload')) {
+      context.handle(_payloadMeta,
+          payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta));
     } else if (isInserting) {
-      context.missing(_payloadIdMeta);
+      context.missing(_payloadMeta);
     }
-    if (data.containsKey('queued_at')) {
-      context.handle(_queuedAtMeta,
-          queuedAt.isAcceptableOrUnknown(data['queued_at']!, _queuedAtMeta));
-    } else if (isInserting) {
-      context.missing(_queuedAtMeta);
+    if (data.containsKey('synced')) {
+      context.handle(_syncedMeta,
+          synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta));
     }
-    if (data.containsKey('requires_network')) {
+    if (data.containsKey('attempts')) {
+      context.handle(_attemptsMeta,
+          attempts.isAcceptableOrUnknown(data['attempts']!, _attemptsMeta));
+    }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    }
+    if (data.containsKey('fail_reason')) {
       context.handle(
-          _requiresNetworkMeta,
-          requiresNetwork.isAcceptableOrUnknown(
-              data['requires_network']!, _requiresNetworkMeta));
+          _failReasonMeta,
+          failReason.isAcceptableOrUnknown(
+              data['fail_reason']!, _failReasonMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('next_retry_at')) {
+      context.handle(
+          _nextRetryAtMeta,
+          nextRetryAt.isAcceptableOrUnknown(
+              data['next_retry_at']!, _nextRetryAtMeta));
     }
     return context;
   }
@@ -1322,15 +1575,25 @@ class $PendingActionsTableTable extends PendingActionsTable
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return PendingActionsTableData(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      actionId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}action_id'])!,
       type: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}type'])!,
-      payloadId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}payload_id'])!,
-      queuedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}queued_at'])!,
-      requiresNetwork: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}requires_network'])!,
+      payload: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}payload'])!,
+      synced: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}synced'])!,
+      attempts: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}attempts'])!,
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
+      failReason: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}fail_reason']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      nextRetryAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}next_retry_at']),
     );
   }
 
@@ -1342,35 +1605,82 @@ class $PendingActionsTableTable extends PendingActionsTable
 
 class PendingActionsTableData extends DataClass
     implements Insertable<PendingActionsTableData> {
-  final String id;
+  /// Auto-increment local surrogate key.
+  final int id;
+
+  /// Client-generated UUID — used as idempotency key on the server.
+  final String actionId;
+
+  /// Movement type: IN | OUT | INVENTORY_COUNT
   final String type;
-  final String payloadId;
-  final DateTime queuedAt;
-  final bool requiresNetwork;
+
+  /// JSON blob with the full sync action payload.
+  final String payload;
+
+  /// True once the server has confirmed this action.
+  final bool synced;
+
+  /// Number of sync attempts made so far.
+  final int attempts;
+
+  /// queued | syncing | failed | done | dead
+  final String status;
+
+  /// Server-side rejection reason (e.g. INSUFFICIENT_STOCK).
+  final String? failReason;
+
+  /// When the action was first queued.
+  final DateTime createdAt;
+
+  /// Earliest time the next retry may be attempted (exponential backoff).
+  final DateTime? nextRetryAt;
   const PendingActionsTableData(
       {required this.id,
+      required this.actionId,
       required this.type,
-      required this.payloadId,
-      required this.queuedAt,
-      required this.requiresNetwork});
+      required this.payload,
+      required this.synced,
+      required this.attempts,
+      required this.status,
+      this.failReason,
+      required this.createdAt,
+      this.nextRetryAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
+    map['id'] = Variable<int>(id);
+    map['action_id'] = Variable<String>(actionId);
     map['type'] = Variable<String>(type);
-    map['payload_id'] = Variable<String>(payloadId);
-    map['queued_at'] = Variable<DateTime>(queuedAt);
-    map['requires_network'] = Variable<bool>(requiresNetwork);
+    map['payload'] = Variable<String>(payload);
+    map['synced'] = Variable<bool>(synced);
+    map['attempts'] = Variable<int>(attempts);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || failReason != null) {
+      map['fail_reason'] = Variable<String>(failReason);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || nextRetryAt != null) {
+      map['next_retry_at'] = Variable<DateTime>(nextRetryAt);
+    }
     return map;
   }
 
   PendingActionsTableCompanion toCompanion(bool nullToAbsent) {
     return PendingActionsTableCompanion(
       id: Value(id),
+      actionId: Value(actionId),
       type: Value(type),
-      payloadId: Value(payloadId),
-      queuedAt: Value(queuedAt),
-      requiresNetwork: Value(requiresNetwork),
+      payload: Value(payload),
+      synced: Value(synced),
+      attempts: Value(attempts),
+      status: Value(status),
+      failReason: failReason == null && nullToAbsent
+          ? const Value.absent()
+          : Value(failReason),
+      createdAt: Value(createdAt),
+      nextRetryAt: nextRetryAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nextRetryAt),
     );
   }
 
@@ -1378,47 +1688,72 @@ class PendingActionsTableData extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return PendingActionsTableData(
-      id: serializer.fromJson<String>(json['id']),
+      id: serializer.fromJson<int>(json['id']),
+      actionId: serializer.fromJson<String>(json['actionId']),
       type: serializer.fromJson<String>(json['type']),
-      payloadId: serializer.fromJson<String>(json['payloadId']),
-      queuedAt: serializer.fromJson<DateTime>(json['queuedAt']),
-      requiresNetwork: serializer.fromJson<bool>(json['requiresNetwork']),
+      payload: serializer.fromJson<String>(json['payload']),
+      synced: serializer.fromJson<bool>(json['synced']),
+      attempts: serializer.fromJson<int>(json['attempts']),
+      status: serializer.fromJson<String>(json['status']),
+      failReason: serializer.fromJson<String?>(json['failReason']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      nextRetryAt: serializer.fromJson<DateTime?>(json['nextRetryAt']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
+      'id': serializer.toJson<int>(id),
+      'actionId': serializer.toJson<String>(actionId),
       'type': serializer.toJson<String>(type),
-      'payloadId': serializer.toJson<String>(payloadId),
-      'queuedAt': serializer.toJson<DateTime>(queuedAt),
-      'requiresNetwork': serializer.toJson<bool>(requiresNetwork),
+      'payload': serializer.toJson<String>(payload),
+      'synced': serializer.toJson<bool>(synced),
+      'attempts': serializer.toJson<int>(attempts),
+      'status': serializer.toJson<String>(status),
+      'failReason': serializer.toJson<String?>(failReason),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'nextRetryAt': serializer.toJson<DateTime?>(nextRetryAt),
     };
   }
 
   PendingActionsTableData copyWith(
-          {String? id,
+          {int? id,
+          String? actionId,
           String? type,
-          String? payloadId,
-          DateTime? queuedAt,
-          bool? requiresNetwork}) =>
+          String? payload,
+          bool? synced,
+          int? attempts,
+          String? status,
+          Value<String?> failReason = const Value.absent(),
+          DateTime? createdAt,
+          Value<DateTime?> nextRetryAt = const Value.absent()}) =>
       PendingActionsTableData(
         id: id ?? this.id,
+        actionId: actionId ?? this.actionId,
         type: type ?? this.type,
-        payloadId: payloadId ?? this.payloadId,
-        queuedAt: queuedAt ?? this.queuedAt,
-        requiresNetwork: requiresNetwork ?? this.requiresNetwork,
+        payload: payload ?? this.payload,
+        synced: synced ?? this.synced,
+        attempts: attempts ?? this.attempts,
+        status: status ?? this.status,
+        failReason: failReason.present ? failReason.value : this.failReason,
+        createdAt: createdAt ?? this.createdAt,
+        nextRetryAt: nextRetryAt.present ? nextRetryAt.value : this.nextRetryAt,
       );
   PendingActionsTableData copyWithCompanion(PendingActionsTableCompanion data) {
     return PendingActionsTableData(
       id: data.id.present ? data.id.value : this.id,
+      actionId: data.actionId.present ? data.actionId.value : this.actionId,
       type: data.type.present ? data.type.value : this.type,
-      payloadId: data.payloadId.present ? data.payloadId.value : this.payloadId,
-      queuedAt: data.queuedAt.present ? data.queuedAt.value : this.queuedAt,
-      requiresNetwork: data.requiresNetwork.present
-          ? data.requiresNetwork.value
-          : this.requiresNetwork,
+      payload: data.payload.present ? data.payload.value : this.payload,
+      synced: data.synced.present ? data.synced.value : this.synced,
+      attempts: data.attempts.present ? data.attempts.value : this.attempts,
+      status: data.status.present ? data.status.value : this.status,
+      failReason:
+          data.failReason.present ? data.failReason.value : this.failReason,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      nextRetryAt:
+          data.nextRetryAt.present ? data.nextRetryAt.value : this.nextRetryAt,
     );
   }
 
@@ -1426,87 +1761,125 @@ class PendingActionsTableData extends DataClass
   String toString() {
     return (StringBuffer('PendingActionsTableData(')
           ..write('id: $id, ')
+          ..write('actionId: $actionId, ')
           ..write('type: $type, ')
-          ..write('payloadId: $payloadId, ')
-          ..write('queuedAt: $queuedAt, ')
-          ..write('requiresNetwork: $requiresNetwork')
+          ..write('payload: $payload, ')
+          ..write('synced: $synced, ')
+          ..write('attempts: $attempts, ')
+          ..write('status: $status, ')
+          ..write('failReason: $failReason, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('nextRetryAt: $nextRetryAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, type, payloadId, queuedAt, requiresNetwork);
+  int get hashCode => Object.hash(id, actionId, type, payload, synced, attempts,
+      status, failReason, createdAt, nextRetryAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is PendingActionsTableData &&
           other.id == this.id &&
+          other.actionId == this.actionId &&
           other.type == this.type &&
-          other.payloadId == this.payloadId &&
-          other.queuedAt == this.queuedAt &&
-          other.requiresNetwork == this.requiresNetwork);
+          other.payload == this.payload &&
+          other.synced == this.synced &&
+          other.attempts == this.attempts &&
+          other.status == this.status &&
+          other.failReason == this.failReason &&
+          other.createdAt == this.createdAt &&
+          other.nextRetryAt == this.nextRetryAt);
 }
 
 class PendingActionsTableCompanion
     extends UpdateCompanion<PendingActionsTableData> {
-  final Value<String> id;
+  final Value<int> id;
+  final Value<String> actionId;
   final Value<String> type;
-  final Value<String> payloadId;
-  final Value<DateTime> queuedAt;
-  final Value<bool> requiresNetwork;
-  final Value<int> rowid;
+  final Value<String> payload;
+  final Value<bool> synced;
+  final Value<int> attempts;
+  final Value<String> status;
+  final Value<String?> failReason;
+  final Value<DateTime> createdAt;
+  final Value<DateTime?> nextRetryAt;
   const PendingActionsTableCompanion({
     this.id = const Value.absent(),
+    this.actionId = const Value.absent(),
     this.type = const Value.absent(),
-    this.payloadId = const Value.absent(),
-    this.queuedAt = const Value.absent(),
-    this.requiresNetwork = const Value.absent(),
-    this.rowid = const Value.absent(),
+    this.payload = const Value.absent(),
+    this.synced = const Value.absent(),
+    this.attempts = const Value.absent(),
+    this.status = const Value.absent(),
+    this.failReason = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.nextRetryAt = const Value.absent(),
   });
   PendingActionsTableCompanion.insert({
-    required String id,
+    this.id = const Value.absent(),
+    required String actionId,
     required String type,
-    required String payloadId,
-    required DateTime queuedAt,
-    this.requiresNetwork = const Value.absent(),
-    this.rowid = const Value.absent(),
-  })  : id = Value(id),
+    required String payload,
+    this.synced = const Value.absent(),
+    this.attempts = const Value.absent(),
+    this.status = const Value.absent(),
+    this.failReason = const Value.absent(),
+    required DateTime createdAt,
+    this.nextRetryAt = const Value.absent(),
+  })  : actionId = Value(actionId),
         type = Value(type),
-        payloadId = Value(payloadId),
-        queuedAt = Value(queuedAt);
+        payload = Value(payload),
+        createdAt = Value(createdAt);
   static Insertable<PendingActionsTableData> custom({
-    Expression<String>? id,
+    Expression<int>? id,
+    Expression<String>? actionId,
     Expression<String>? type,
-    Expression<String>? payloadId,
-    Expression<DateTime>? queuedAt,
-    Expression<bool>? requiresNetwork,
-    Expression<int>? rowid,
+    Expression<String>? payload,
+    Expression<bool>? synced,
+    Expression<int>? attempts,
+    Expression<String>? status,
+    Expression<String>? failReason,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? nextRetryAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (actionId != null) 'action_id': actionId,
       if (type != null) 'type': type,
-      if (payloadId != null) 'payload_id': payloadId,
-      if (queuedAt != null) 'queued_at': queuedAt,
-      if (requiresNetwork != null) 'requires_network': requiresNetwork,
-      if (rowid != null) 'rowid': rowid,
+      if (payload != null) 'payload': payload,
+      if (synced != null) 'synced': synced,
+      if (attempts != null) 'attempts': attempts,
+      if (status != null) 'status': status,
+      if (failReason != null) 'fail_reason': failReason,
+      if (createdAt != null) 'created_at': createdAt,
+      if (nextRetryAt != null) 'next_retry_at': nextRetryAt,
     });
   }
 
   PendingActionsTableCompanion copyWith(
-      {Value<String>? id,
+      {Value<int>? id,
+      Value<String>? actionId,
       Value<String>? type,
-      Value<String>? payloadId,
-      Value<DateTime>? queuedAt,
-      Value<bool>? requiresNetwork,
-      Value<int>? rowid}) {
+      Value<String>? payload,
+      Value<bool>? synced,
+      Value<int>? attempts,
+      Value<String>? status,
+      Value<String?>? failReason,
+      Value<DateTime>? createdAt,
+      Value<DateTime?>? nextRetryAt}) {
     return PendingActionsTableCompanion(
       id: id ?? this.id,
+      actionId: actionId ?? this.actionId,
       type: type ?? this.type,
-      payloadId: payloadId ?? this.payloadId,
-      queuedAt: queuedAt ?? this.queuedAt,
-      requiresNetwork: requiresNetwork ?? this.requiresNetwork,
-      rowid: rowid ?? this.rowid,
+      payload: payload ?? this.payload,
+      synced: synced ?? this.synced,
+      attempts: attempts ?? this.attempts,
+      status: status ?? this.status,
+      failReason: failReason ?? this.failReason,
+      createdAt: createdAt ?? this.createdAt,
+      nextRetryAt: nextRetryAt ?? this.nextRetryAt,
     );
   }
 
@@ -1514,22 +1887,34 @@ class PendingActionsTableCompanion
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<String>(id.value);
+      map['id'] = Variable<int>(id.value);
+    }
+    if (actionId.present) {
+      map['action_id'] = Variable<String>(actionId.value);
     }
     if (type.present) {
       map['type'] = Variable<String>(type.value);
     }
-    if (payloadId.present) {
-      map['payload_id'] = Variable<String>(payloadId.value);
+    if (payload.present) {
+      map['payload'] = Variable<String>(payload.value);
     }
-    if (queuedAt.present) {
-      map['queued_at'] = Variable<DateTime>(queuedAt.value);
+    if (synced.present) {
+      map['synced'] = Variable<bool>(synced.value);
     }
-    if (requiresNetwork.present) {
-      map['requires_network'] = Variable<bool>(requiresNetwork.value);
+    if (attempts.present) {
+      map['attempts'] = Variable<int>(attempts.value);
     }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (failReason.present) {
+      map['fail_reason'] = Variable<String>(failReason.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (nextRetryAt.present) {
+      map['next_retry_at'] = Variable<DateTime>(nextRetryAt.value);
     }
     return map;
   }
@@ -1538,11 +1923,15 @@ class PendingActionsTableCompanion
   String toString() {
     return (StringBuffer('PendingActionsTableCompanion(')
           ..write('id: $id, ')
+          ..write('actionId: $actionId, ')
           ..write('type: $type, ')
-          ..write('payloadId: $payloadId, ')
-          ..write('queuedAt: $queuedAt, ')
-          ..write('requiresNetwork: $requiresNetwork, ')
-          ..write('rowid: $rowid')
+          ..write('payload: $payload, ')
+          ..write('synced: $synced, ')
+          ..write('attempts: $attempts, ')
+          ..write('status: $status, ')
+          ..write('failReason: $failReason, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('nextRetryAt: $nextRetryAt')
           ..write(')'))
         .toString();
   }
@@ -1770,6 +2159,11 @@ typedef $$MovementsTableTableCreateCompanionBuilder = MovementsTableCompanion
   required DateTime timestamp,
   required String performedBy,
   Value<String?> location,
+  Value<double?> lat,
+  Value<double?> lng,
+  Value<String?> deviceId,
+  Value<String?> sessionId,
+  Value<String?> imageUrl,
   Value<String> metadata,
   Value<int> rowid,
 });
@@ -1783,6 +2177,11 @@ typedef $$MovementsTableTableUpdateCompanionBuilder = MovementsTableCompanion
   Value<DateTime> timestamp,
   Value<String> performedBy,
   Value<String?> location,
+  Value<double?> lat,
+  Value<double?> lng,
+  Value<String?> deviceId,
+  Value<String?> sessionId,
+  Value<String?> imageUrl,
   Value<String> metadata,
   Value<int> rowid,
 });
@@ -1819,6 +2218,21 @@ class $$MovementsTableTableFilterComposer
 
   ColumnFilters<String> get location => $composableBuilder(
       column: $table.location, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get lat => $composableBuilder(
+      column: $table.lat, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get lng => $composableBuilder(
+      column: $table.lng, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get deviceId => $composableBuilder(
+      column: $table.deviceId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get sessionId => $composableBuilder(
+      column: $table.sessionId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get imageUrl => $composableBuilder(
+      column: $table.imageUrl, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get metadata => $composableBuilder(
       column: $table.metadata, builder: (column) => ColumnFilters(column));
@@ -1858,6 +2272,21 @@ class $$MovementsTableTableOrderingComposer
   ColumnOrderings<String> get location => $composableBuilder(
       column: $table.location, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<double> get lat => $composableBuilder(
+      column: $table.lat, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get lng => $composableBuilder(
+      column: $table.lng, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get deviceId => $composableBuilder(
+      column: $table.deviceId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get sessionId => $composableBuilder(
+      column: $table.sessionId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get imageUrl => $composableBuilder(
+      column: $table.imageUrl, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get metadata => $composableBuilder(
       column: $table.metadata, builder: (column) => ColumnOrderings(column));
 }
@@ -1894,6 +2323,21 @@ class $$MovementsTableTableAnnotationComposer
 
   GeneratedColumn<String> get location =>
       $composableBuilder(column: $table.location, builder: (column) => column);
+
+  GeneratedColumn<double> get lat =>
+      $composableBuilder(column: $table.lat, builder: (column) => column);
+
+  GeneratedColumn<double> get lng =>
+      $composableBuilder(column: $table.lng, builder: (column) => column);
+
+  GeneratedColumn<String> get deviceId =>
+      $composableBuilder(column: $table.deviceId, builder: (column) => column);
+
+  GeneratedColumn<String> get sessionId =>
+      $composableBuilder(column: $table.sessionId, builder: (column) => column);
+
+  GeneratedColumn<String> get imageUrl =>
+      $composableBuilder(column: $table.imageUrl, builder: (column) => column);
 
   GeneratedColumn<String> get metadata =>
       $composableBuilder(column: $table.metadata, builder: (column) => column);
@@ -1934,6 +2378,11 @@ class $$MovementsTableTableTableManager extends RootTableManager<
             Value<DateTime> timestamp = const Value.absent(),
             Value<String> performedBy = const Value.absent(),
             Value<String?> location = const Value.absent(),
+            Value<double?> lat = const Value.absent(),
+            Value<double?> lng = const Value.absent(),
+            Value<String?> deviceId = const Value.absent(),
+            Value<String?> sessionId = const Value.absent(),
+            Value<String?> imageUrl = const Value.absent(),
             Value<String> metadata = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
@@ -1946,6 +2395,11 @@ class $$MovementsTableTableTableManager extends RootTableManager<
             timestamp: timestamp,
             performedBy: performedBy,
             location: location,
+            lat: lat,
+            lng: lng,
+            deviceId: deviceId,
+            sessionId: sessionId,
+            imageUrl: imageUrl,
             metadata: metadata,
             rowid: rowid,
           ),
@@ -1958,6 +2412,11 @@ class $$MovementsTableTableTableManager extends RootTableManager<
             required DateTime timestamp,
             required String performedBy,
             Value<String?> location = const Value.absent(),
+            Value<double?> lat = const Value.absent(),
+            Value<double?> lng = const Value.absent(),
+            Value<String?> deviceId = const Value.absent(),
+            Value<String?> sessionId = const Value.absent(),
+            Value<String?> imageUrl = const Value.absent(),
             Value<String> metadata = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
@@ -1970,6 +2429,11 @@ class $$MovementsTableTableTableManager extends RootTableManager<
             timestamp: timestamp,
             performedBy: performedBy,
             location: location,
+            lat: lat,
+            lng: lng,
+            deviceId: deviceId,
+            sessionId: sessionId,
+            imageUrl: imageUrl,
             metadata: metadata,
             rowid: rowid,
           ),
@@ -2190,21 +2654,29 @@ typedef $$StockEntriesTableTableProcessedTableManager = ProcessedTableManager<
     PrefetchHooks Function()>;
 typedef $$PendingActionsTableTableCreateCompanionBuilder
     = PendingActionsTableCompanion Function({
-  required String id,
+  Value<int> id,
+  required String actionId,
   required String type,
-  required String payloadId,
-  required DateTime queuedAt,
-  Value<bool> requiresNetwork,
-  Value<int> rowid,
+  required String payload,
+  Value<bool> synced,
+  Value<int> attempts,
+  Value<String> status,
+  Value<String?> failReason,
+  required DateTime createdAt,
+  Value<DateTime?> nextRetryAt,
 });
 typedef $$PendingActionsTableTableUpdateCompanionBuilder
     = PendingActionsTableCompanion Function({
-  Value<String> id,
+  Value<int> id,
+  Value<String> actionId,
   Value<String> type,
-  Value<String> payloadId,
-  Value<DateTime> queuedAt,
-  Value<bool> requiresNetwork,
-  Value<int> rowid,
+  Value<String> payload,
+  Value<bool> synced,
+  Value<int> attempts,
+  Value<String> status,
+  Value<String?> failReason,
+  Value<DateTime> createdAt,
+  Value<DateTime?> nextRetryAt,
 });
 
 class $$PendingActionsTableTableFilterComposer
@@ -2216,21 +2688,35 @@ class $$PendingActionsTableTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<String> get id => $composableBuilder(
+  ColumnFilters<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get actionId => $composableBuilder(
+      column: $table.actionId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get type => $composableBuilder(
       column: $table.type, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get payloadId => $composableBuilder(
-      column: $table.payloadId, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get payload => $composableBuilder(
+      column: $table.payload, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<DateTime> get queuedAt => $composableBuilder(
-      column: $table.queuedAt, builder: (column) => ColumnFilters(column));
+  ColumnFilters<bool> get synced => $composableBuilder(
+      column: $table.synced, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<bool> get requiresNetwork => $composableBuilder(
-      column: $table.requiresNetwork,
-      builder: (column) => ColumnFilters(column));
+  ColumnFilters<int> get attempts => $composableBuilder(
+      column: $table.attempts, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get failReason => $composableBuilder(
+      column: $table.failReason, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get nextRetryAt => $composableBuilder(
+      column: $table.nextRetryAt, builder: (column) => ColumnFilters(column));
 }
 
 class $$PendingActionsTableTableOrderingComposer
@@ -2242,21 +2728,35 @@ class $$PendingActionsTableTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<String> get id => $composableBuilder(
+  ColumnOrderings<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get actionId => $composableBuilder(
+      column: $table.actionId, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get type => $composableBuilder(
       column: $table.type, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get payloadId => $composableBuilder(
-      column: $table.payloadId, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get payload => $composableBuilder(
+      column: $table.payload, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<DateTime> get queuedAt => $composableBuilder(
-      column: $table.queuedAt, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<bool> get synced => $composableBuilder(
+      column: $table.synced, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<bool> get requiresNetwork => $composableBuilder(
-      column: $table.requiresNetwork,
-      builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<int> get attempts => $composableBuilder(
+      column: $table.attempts, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get failReason => $composableBuilder(
+      column: $table.failReason, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get nextRetryAt => $composableBuilder(
+      column: $table.nextRetryAt, builder: (column) => ColumnOrderings(column));
 }
 
 class $$PendingActionsTableTableAnnotationComposer
@@ -2268,20 +2768,35 @@ class $$PendingActionsTableTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<String> get id =>
+  GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get actionId =>
+      $composableBuilder(column: $table.actionId, builder: (column) => column);
 
   GeneratedColumn<String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
 
-  GeneratedColumn<String> get payloadId =>
-      $composableBuilder(column: $table.payloadId, builder: (column) => column);
+  GeneratedColumn<String> get payload =>
+      $composableBuilder(column: $table.payload, builder: (column) => column);
 
-  GeneratedColumn<DateTime> get queuedAt =>
-      $composableBuilder(column: $table.queuedAt, builder: (column) => column);
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
 
-  GeneratedColumn<bool> get requiresNetwork => $composableBuilder(
-      column: $table.requiresNetwork, builder: (column) => column);
+  GeneratedColumn<int> get attempts =>
+      $composableBuilder(column: $table.attempts, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get failReason => $composableBuilder(
+      column: $table.failReason, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get nextRetryAt => $composableBuilder(
+      column: $table.nextRetryAt, builder: (column) => column);
 }
 
 class $$PendingActionsTableTableTableManager extends RootTableManager<
@@ -2314,36 +2829,52 @@ class $$PendingActionsTableTableTableManager extends RootTableManager<
               $$PendingActionsTableTableAnnotationComposer(
                   $db: db, $table: table),
           updateCompanionCallback: ({
-            Value<String> id = const Value.absent(),
+            Value<int> id = const Value.absent(),
+            Value<String> actionId = const Value.absent(),
             Value<String> type = const Value.absent(),
-            Value<String> payloadId = const Value.absent(),
-            Value<DateTime> queuedAt = const Value.absent(),
-            Value<bool> requiresNetwork = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
+            Value<String> payload = const Value.absent(),
+            Value<bool> synced = const Value.absent(),
+            Value<int> attempts = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<String?> failReason = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime?> nextRetryAt = const Value.absent(),
           }) =>
               PendingActionsTableCompanion(
             id: id,
+            actionId: actionId,
             type: type,
-            payloadId: payloadId,
-            queuedAt: queuedAt,
-            requiresNetwork: requiresNetwork,
-            rowid: rowid,
+            payload: payload,
+            synced: synced,
+            attempts: attempts,
+            status: status,
+            failReason: failReason,
+            createdAt: createdAt,
+            nextRetryAt: nextRetryAt,
           ),
           createCompanionCallback: ({
-            required String id,
+            Value<int> id = const Value.absent(),
+            required String actionId,
             required String type,
-            required String payloadId,
-            required DateTime queuedAt,
-            Value<bool> requiresNetwork = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
+            required String payload,
+            Value<bool> synced = const Value.absent(),
+            Value<int> attempts = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<String?> failReason = const Value.absent(),
+            required DateTime createdAt,
+            Value<DateTime?> nextRetryAt = const Value.absent(),
           }) =>
               PendingActionsTableCompanion.insert(
             id: id,
+            actionId: actionId,
             type: type,
-            payloadId: payloadId,
-            queuedAt: queuedAt,
-            requiresNetwork: requiresNetwork,
-            rowid: rowid,
+            payload: payload,
+            synced: synced,
+            attempts: attempts,
+            status: status,
+            failReason: failReason,
+            createdAt: createdAt,
+            nextRetryAt: nextRetryAt,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
